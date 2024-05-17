@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-md bg-primary-subtle shadow-sm">
     <div class="container-fluid">
-        {% if request.user.is_authenticated %}
+        {% if request.session.pengguna %}
         <a class="navbar-brand text-primary-emphasis" href="{% url 'show:show_main' %}">PacilFlix</a>
         {% else %}
         <a class="navbar-brand text-primary-emphasis" href="{% url 'authentication:landing_page' %}">PacilFlix</a>
@@ -14,7 +14,7 @@
 
         <div class="collapse navbar-collapse" id="navbarContent">
             <ul class="navbar-nav me-auto mb-2 mb-md-0" id="navbarOptions">
-                {% if request.user.is_authenticated %}
+                {% if request.session.pengguna %}
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'show:show_main' %}">Shows</a>
                 </li>
@@ -42,13 +42,13 @@
             </button>
 
             <div>
-                {% if request.user.is_authenticated %}
+                {% if request.session.pengguna %}
                     <div class="btn-group">
                         <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                             <span>
                                 <!-- profile picture -->
                             </span>
-                            {{ request.user.username }}
+                            {{ request.session.pengguna }}
                         </button>
                         <ul class="dropdown-menu dropdown-menu-md-end shadow">
                             <li>

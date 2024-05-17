@@ -2,31 +2,40 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib import messages
-
-from authentication.models import Pengguna
-
-from .forms import PenggunaCreationForm
+from django.db import connection
 
 # Create your views here.
+def get_pengguna(request):
+    try:
+        return request.session["pengguna"]
+    except KeyError:
+        return None
+
 def show_landing(request):
-    if request.user.is_authenticated:
+    if get_pengguna(request) != None:
         return redirect(reverse("show:show_main"))
     
     return render(request, 'main.html', context={})
 
 def user_login(request):
-    if request.user.is_authenticated:
+    if get_pengguna(request) != None:
         return HttpResponseRedirect(reverse("authentication:landing_page"))
     
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
+
+        raw_query = "SELECT * FROM PENGGUNA WHERE username='{username}' AND password='{password}'"
+        query = raw_query.format(username=username, password=password)
+
+        cursor = connection.cursor()
+        cursor.execute(query)
+        query_output = cursor.fetchall()
+        cursor.close()
+
+        if len(query_output) == 1:
+            request.session["pengguna"] = username
             return redirect(reverse("authentication:landing_page"))
         else:
             messages.info(request, 'Incorrect username or password')
@@ -35,29 +44,31 @@ def user_login(request):
     return render(request, 'login.html', context)
 
 def user_register(request):
-    if request.user.is_authenticated:
+    if get_pengguna(request) != None:
         return HttpResponseRedirect(reverse("authentication:landing_page"))
     
-    form = PenggunaCreationForm(request.POST or None)
-    if request.method == "POST":
-        if form.is_valid():
-            new_user = form.save()
+    if request.method == "POST" and request.POST.get('password1') == request.POST.get('password2'):
+        username = request.POST.get('username')
+        password = request.POST.get('password1')
+        country = request.POST.get('country')
 
-            # buat objek pengguna juga
-            pengguna = Pengguna()
-            pengguna.user = new_user
-            pengguna.country = form.cleaned_data['country']
-            pengguna.save()
+        raw_query = "INSERT INTO PENGGUNA VALUES ('{username}', '{password}', '{country}')"
+        query = raw_query.format(username=username, password=password, country=country)
 
-            user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password1'])
-            login(request, user)
-
+        cursor = connection.cursor()
+        try:
+            cursor.execute(query)
+            request.session["pengguna"] = username
             response = HttpResponseRedirect(reverse("show:show_main"))
             return response
-    context = {'page_title': "Register", 'form': form}
+        except:
+            messages.info(request, 'Username already exists!')
+        finally:
+            cursor.close()
+    context = {'page_title': "Register"}
     return render(request, 'register.html', context)
 
 def user_logout(request):
-    logout(request)
+    request.session["pengguna"] = None
     response = HttpResponseRedirect(reverse('authentication:landing_page'))
     return response
