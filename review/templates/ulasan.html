@@ -70,59 +70,46 @@
         }
     </style>
 </head>
+
+{% block content %}
 <body>
-    <div class="review-section">
-        <h2>ULASAN</h2>
-        <form class="review-form">
-            <input type="text" placeholder="Deskripsi ulasan" required />
-            <input type="number" placeholder="Rating (1-5)" min="1" max="5" required />
-            <input type="submit" value="Submit" />
-        </form>
-        <h3>Daftar Ulasan:</h3>
-        <ul class="review-list">
-            <li>
-                <p><strong>rainbowbridge</strong></p> 
-                <p>Film thriller satir Korea Selatan ini memenangkan Palme d'Or dan Oscar dengan cerita yang memikat tentang kesenjangan kelas sosial, dipadukan dengan arahan sutradara yang brilian dan akting yang memukau dari seluruh pemain.</p>
-                <p class="review-rating">Rating: 5⭐</p>
-                <p class="timestamp">2024-01-05 22:18:29</p>
-            </li>
-            <li>
-                <p><strong>kentangnyamekdi</strong></p> 
-                <p>Sebuah drama yang menyentuh hati mengisahkan seorang pria tua yang kesepian yang menemukan kembali semangat hidup melalui interaksi dengan tetangganya, menggabungkan humor dan kesedihan dengan indah.</p>
-                <p class="review-rating">Rating: 5⭐</p>
-                <p class="timestamp">2024-01-06 11:16:01</p>
-            </li>
-            <li>
-                <p><strong>cottonthedog</strong></p> 
-                <p>Mengikuti kelompok akapela perempuan dalam usaha mereka untuk menang di kejuaraan. Penuh dengan lagu-lagu yang menarik dan humor yang cerdas, film ini sempurna untuk pecinta musik dan komedi.</p>
-                <p class="review-rating">Rating: 5⭐</p>
-                <p class="timestamp">2024-01-04 16:26:42</p>
-            </li>
-            <li>
-                <p><strong>kodokronggeng</strong></p> 
-                <p>Film ini menceritakan tentang impian dan cinta, dengan Ryan Gosling dan Emma Stone yang menampilkan chemistry yang luar biasa.</p>
-                <p class="review-rating">Rating: 5⭐</p>
-                <p class="timestamp">2024-01-05 12:03:03</p>
-            </li>
-            <li>
-                <p><strong>berkelapkelip</strong></p> 
-                <p>Musikal yang inspiratif ini mengisahkan P.T. Barnum dan penciptaan sirkusnya. Dengan lagu-lagu yang membangkitkan semangat dan penampilan mengesankan dari Hugh Jackman, film ini sangat menyentuh.</p>
-                <p class="review-rating">Rating: 4⭐</p>
-                <p class="timestamp">2024-01-05 18:16:15</p>
-            </li>
-            <li>
-                <p><strong>parahsihtamol</strong></p> 
-                <p>Lanjutan dari seri Jurassic Park yang menyajikan aksi dan petualangan dengan efek visual yang mengesankan. Meskipun plotnya standar, tetap menghibur bagi penggemar dinosaurus dan film aksi.</p>
-                <p class="review-rating">Rating: 5⭐</p>
-                <p class="timestamp">2024-01-06 16:26:42</p>
-            </li>
-            <li>
-                <p><strong>aizadiguno</strong></p> 
-                <p>Film ini masih dalam tahap produksi dan dijadwalkan akan memberikan pandangan yang mendalam pada asal usul Presiden Snow dan awal dari Hunger Games, diharapkan memberikan konteks yang lebih kaya untuk saga ini.</p>
-                <p class="review-rating">Rating: 3⭐</p>
-                <p class="timestamp">2024-01-07 19:17:47</p>
-            </li>
-        </ul>
+    <div class="container">
+        <center><h1>Ulasan {{ judul.1 }}</h1></center>
+        <div class="review-form">
+            <h2>Beri ulasan</h2>
+            <form id="reviewForm" method="post" action="{% url 'ulasan:submit_ulasan' judul.0 %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <label for="rating">Rating (1-5):</label>
+                    <input type="number" id="rating" name="rating" min="1" max="5" required>
+                </div>
+                <div class="form-row">
+                    <label for="deskripsi">Ulasan:</label>
+                    <textarea id="deskripsi" name="deskripsi" rows="4" required></textarea>
+                </div>
+                <center><input type="submit" value="Submit"></center>
+            </form>
+        </div>
+
+        <div class="review-list">
+            <h2>Ulasan</h2>
+            <ul id="reviews">
+            </ul>
+        </div>
+
+        {% for ulasan in ulasans %}
+        <div class="ulasan-card">
+            <div class="ulasan-header">
+                <span class="username">{{ ulasan.1 }}</span>
+                <span class="timestamp">{{ ulasan.2 }}</span>
+            </div>
+            <div class="rating">{{ ulasan.3 }}/5</div>
+            <div class="description">
+                "{{ ulasan.4 }}"
+            </div>
+        </div>
+        {% endfor %}
+
     </div>
 </body>
-</html>
+{% endblock content %} 
