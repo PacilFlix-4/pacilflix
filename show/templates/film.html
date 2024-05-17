@@ -181,7 +181,7 @@
     });
 
     function loadModalFavorit() {
-        fetch('/tayangan/list_favorit/')
+        fetch('/favorite/list_favorit/')
         .then(response => response.json())
         .then(data => {
             createModal(data.dropdown_options, data.id_tayangan);
