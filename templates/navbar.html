@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-md bg-primary-subtle shadow-sm">
     <div class="container-fluid">
         {% if request.user.is_authenticated %}
-        <a class="navbar-brand text-primary-emphasis" href="{% url 'show:show_main' %}">PacilFlix</a>
+        <a class="navbar-brand text-primary-emphasis" href="{% url 'show:tayangan' %}">PacilFlix</a>
         {% else %}
         <a class="navbar-brand text-primary-emphasis" href="{% url 'authentication:landing_page' %}">PacilFlix</a>
         {% endif %}
@@ -16,7 +16,7 @@
             <ul class="navbar-nav me-auto mb-2 mb-md-0" id="navbarOptions">
                 {% if request.user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="{% url 'show:show_main' %}">Shows</a>
+                    <a class="nav-link" aria-current="page" href="{% url 'show:tayangan' %}">Shows</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'contributor:show_main' %}">Contributors</a>

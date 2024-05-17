@@ -47,23 +47,28 @@
 {% endblock meta %}
 
 {% block content %}
+<body>
     <div class="container">
-        <h1>Halaman Episode</h1>
-        <div class="info">
-            <h2>Parasite</h2>
-            <h3>Parasite</h3>
-            <button class="button">Tonton</button>
-
-            <h2>Episode lainnya:</h2>
-            <ul>
-                <p>Episode 1: <a href="pacilflix.com/film/parasite/1">pacilflix.com/film/parasite/1</a></p>
-                <p>Episode 2: <a href="pacilflix.com/film/parasite/2">pacilflix.com/film/parasite/2</a></p>
-                <p>Episode 3: <a href="pacilflix.com/film/parasite/3">pacilflix.com/film/parasite/3</a></p>
-            </ul>
-
-            <p>Sinopsis: Film drama Korea Selatan tentang keluarga miskin yang merencanakan mengambil alih kehidupan keluarga kaya.</p>
-            <p>Durasi Episode: 132 menit</p>
-            <p>URL Episode: <a href="pacilflix.com/film/parasite">pacilflix.com/film/parasite</a></p>
-            <p>Tanggal Rilis Episode: 2019-05-30</p>
+        <div class="film-details">
+            <h1>{{ series_title }}</h1>
+            <h2>{{ episode.1 }}</h2>
+            <br><br><br><br><br><br><br><br><br><br><br>
+            <input type="range" class="form-range" min="0" max="100" id="watchrange">
+            <br><br><br>
+            <h3 style="color: white;">Other Episodes</h3>
+            <div class="film-buttons">
+                {% for episode in episodes %}
+                    <a href="{% url 'tayangan:episode' episode.1 episode.0 %}">
+                        <button class="primary">{{ episode.0|add:1 }}</button>
+                    </a>
+                {% endfor %}
+            </div>
+            
+            <p>{{ episode.2 }}</p>
+            <p>{{ episode.4 }}</p>
+            <p>Tanggal Rilis: {{ episode.5 }}</p>
+            <p>Durasi: {{ episode.3 }}</p>
+        </div>
     </div>
-{% endblock content %}
+</body>
+{% endblock content %} 

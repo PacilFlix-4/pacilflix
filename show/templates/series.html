@@ -81,104 +81,164 @@
 {% endblock meta %}
 
 {% block content %}
+<body>
     <div class="container">
-        <h1>Halaman Series</h1>
-        <div class="info">
-            <h2>Parasite</h2>
-            <button class="button">Tonton</button>
-            <button class="button" onclick="showDownloadModal()" class="btn btn-outline-danger">
-                Unduh Tayangan
+        <div class="series-details">
+            <h1>{{ series_details.judul }}</h1>
+            <br><br><br><br><br><br><br><br><br><br><br>
+            <input type="range" class="form-range" id="watchrange">
+            <br><br><br>
+            <p>{{ series_details.sinopsis }}</p>
+            <br>
+            <p>Genre: 
+                {% for genre in series_details.genres %}
+                    {{ genre }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p>Asal Negara: {{ series_details.asal_negara }}</p>
+            <p>Rating: 4.5/5</p>
+            <p>Pemain: 
+                {% for pemain in series_details.pemain %}
+                    {{ pemain }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p>Penulis Skenario:
+                {% for penulis in series_details.penulis %}
+                    {{ penulis }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            <p>Sutradara: {{ series_details.sutradara }}</p>
+        </div>
+        <h3 style="color: white;">Episodes</h3>
+        <div class="film-buttons">
+            {% for episode in series_details.episodes %}
+                <a href="{% url 'tayangan:episode' series_details.id_tayangan episode.0 %}">
+                    <button class="primary">{{ episode.0|add:1 }}</button>
+                </a>
+            {% endfor %}
+        </div>
+
+        <div class="film-buttons">
+            <button type="button" class="primary" onclick="downloadTayangan('{{ series_details.id_tayangan }}')" data-bs-toggle="modal" data-bs-target="#downloadModal">
+                Unduh
             </button>
-            <button class="button" onclick="showFavoriteModal('Parasite')" class="btn btn-outline-danger">
-                Favorit Tayangan
-            </button>
-
-            <p>Total View: 9999</p>
-            <p>Rating Rata-Rata: 4/5</p>
-            <p>Sinopsis: Film drama Korea Selatan tentang keluarga miskin yang merencanakan mengambil alih kehidupan keluarga kaya.</p>
-
-            <h2>Genre:</h2>
-            <ul>
-                <li>Thriller</li>
-            </ul>
-            
-            <h2>Asal Negara:</h2>
-            <ul>
-                <li>Korea Selatan</li>
-            </ul>
-
-            <h2>Pemain:</h2>
-            <ul>
-                <li>Lee Sun-kyun</li>
-                <li>Cho Yeo-jeong</li>
-                <li>Park So-dam</li>
-            </ul>
-
-            <h2>Penulis Skenario:</h2>
-            <ul>
-                <li>Bong Joon-ho</li>
-            </ul>
-
-            <h2>Sutradara:</h2>
-            <ul>
-                <li>Bong Joon-ho</li>
-            </ul>
-        </div>
-
-        <div class="info">
-            <h2>Bagian Ulasan</h2>
-        </div>
-    </div>
-
-    <div id="downloadModal" class="modal">
-        <div class="modal-content">
-            <h6>SUKSES MENAMBAHKAN TAYANGAN KE DAFTAR UNDUHAN</h2>
-            <p>Selamat! Anda telah berhasil mengunduh Parasite dan akan
-                berlaku hingga [current time + 7 hari]. Cek informasi selengkapnya
-                pada halaman daftar unduhan.</p>
-            <button class="btn btn-success">Lihat Daftar Unduhan</button>
-        </div>
-    </div>
-
-    <div id="favoriteModal" class="modal">
-        <div class="modal-content">
-            <h6>TAMBAH KE DAFTAR FAVORIT</h6>
-            <label for="judulTayangan">Judul Tayangan:</label>
-            <span id="judulTayangan"></span>
-            <select id="favoriteList" class="form-control">
-                <option value="" disabled selected hidden>Pilih daftar favorit</option>
-                <option value="1">Daftar 1</option>
-                <option value="2">Daftar 2</option>
-                <option value="3">Daftar 3</option>
-            </select>
-            <button class="btn btn-success">Tambah</button>
-        </div>
-    </div>
-{% endblock content %}
-
-{% block scripts %}
-<script>
-    function showFavoriteModal(title) {
-        var modal = document.getElementById("favoriteModal");
-        judulTayangan.innerHTML = title;
-        modal.style.display = "flex";
-    }
-
-    function showDownloadModal() {
-        var modal = document.getElementById("downloadModal");
-        modal.style.display = "flex";
-    }
-
-    window.onclick = function(event) {
-        var favoriteModal = document.getElementById("favoriteModal");
-        var downloadModal = document.getElementById("downloadModal");
         
-        if (event.target == favoriteModal) {
-            favoriteModal.style.display = "none";
-        }
-        if (event.target == downloadModal) {
-            downloadModal.style.display = "none";
-        }
+            <!-- Modal -->
+            <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="downloadModalLabel">Sukses Menambahkan Tayangan ke Daftar Unduhan</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body" id="modalBody">
+                            <!-- Text will be inserted here by JavaScript -->
+                        </div>
+                        <a type="button" class="btn btn-primary" href="{% url 'tayangan:go_to_unduhan' %}">Menuju Daftar Unduhan</a>
+                    </div>
+                </div>
+            </div>
+        
+            <button type="button" class="favorite" onclick="loadModalFavorit()">
+                Favorit
+            </button>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        </div>
+
+        <div class="film-reviews">
+            <a type="button" href="{% url 'tayangan:open_ulasan' series_details.id_tayangan %}">Ulasan</button>
+        </div>
+    </div>
+</body>
+
+<!-- Load jQuery first -->
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<!-- Then Popper.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<!-- Then Bootstrap's JavaScript -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    function downloadTayangan(idTayangan) {
+        fetch("{% url 'tayangan:insert_unduhan' %}?id_tayangan=" + idTayangan, {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateToday = new Date();
+        const dateInSevenDays = new Date(dateToday);
+        dateInSevenDays.setDate(dateToday.getDate() + 7);
+
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        const formattedToday = dateToday.toLocaleDateString('id-ID', options);
+        const formattedSevenDays = dateInSevenDays.toLocaleDateString('id-ID', options);
+
+        const modalBodyText = `Selamat! Anda telah berhasil mengunduh {{ series_details.judul }} dan akan berlaku hingga ${formattedSevenDays}. Cek informasi selengkapnya pada halaman daftar unduhan.`;
+        document.getElementById('modalBody').textContent = modalBodyText;
+    });
+
+    function loadModalFavorit() {
+        fetch('/tayangan/list_favorit/')
+        .then(response => response.json())
+        .then(data => {
+            createModal(data.dropdown_options, data.id_tayangan);
+        });
+    }
+
+    function createModal(options, id_tayangan) {
+        // Create modal structure
+        let modal = document.createElement('div');
+        modal.classList.add('modal', 'fade');
+        modal.id = 'dynamicModal';
+        modal.innerHTML = `
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="favoriteModalLabel">Tambah ke Daftar Favorit</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="favoriteListDropdown" class="form-label">Judul Daftar Favorit:</label>
+                                <select class="form-control" id="dropdown">
+                                    ${options.map(option => `<option value="${option.value}">${option.text}</option>`).join('')}
+                                </select>
+                            </div>
+                            <a type="button" class="btn btn-primary" id="addFavorite"">Tambah</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Append modal to body
+        document.body.appendChild(modal);
+
+        // Show the modal
+        $('#dynamicModal').modal('show');
+
+        document.getElementById('addFavorite').addEventListener('click', function() {
+            var dropdownValue = document.getElementById('dropdown').value;
+            var redirectUrl = `{% url 'tayangan:insert_favorit' %}?id_tayangan={{ series_details.id_tayangan }}&timestamp=${dropdownValue}`;
+            window.location.href = redirectUrl;
+        });
+
+        // Remove the modal from DOM after it's hidden
+        $('#dynamicModal').on('hidden.bs.modal', function () {
+            $(this).remove();
+        });
     }
 </script>
-{% endblock scripts %}
+{% endblock content %} 

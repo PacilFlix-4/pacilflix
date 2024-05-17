@@ -13,7 +13,7 @@ from .forms import PenggunaCreationForm
 # Create your views here.
 def show_landing(request):
     if request.user.is_authenticated:
-        return redirect(reverse("show:show_main"))
+        return redirect(reverse("show:tayangan"))
     
     return render(request, 'main.html', context={})
 
