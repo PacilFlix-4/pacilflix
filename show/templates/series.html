@@ -112,7 +112,7 @@
         <h3 style="color: white;">Episodes</h3>
         <div class="film-buttons">
             {% for episode in series_details.episodes %}
-                <a href="{% url 'tayangan:episode' series_details.id_tayangan episode.0 %}">
+                <a href="{% url 'show:episode' series_details.id_tayangan episode.0 %}">
                     <button class="primary">{{ episode.0|add:1 }}</button>
                 </a>
             {% endfor %}
@@ -134,7 +134,7 @@
                         <div class="modal-body" id="modalBody">
                             <!-- Text will be inserted here by JavaScript -->
                         </div>
-                        <a type="button" class="btn btn-primary" href="{% url 'tayangan:go_to_unduhan' %}">Menuju Daftar Unduhan</a>
+                        <a type="button" class="btn btn-primary" href="{% url 'show:go_to_unduhan' %}">Menuju Daftar Unduhan</a>
                     </div>
                 </div>
             </div>
@@ -147,7 +147,7 @@
         </div>
 
         <div class="film-reviews">
-            <a type="button" href="{% url 'tayangan:open_ulasan' series_details.id_tayangan %}">Ulasan</button>
+            <a type="button">Ulasan</a>
         </div>
     </div>
 </body>
@@ -161,7 +161,7 @@
 
 <script>
     function downloadTayangan(idTayangan) {
-        fetch("{% url 'tayangan:insert_unduhan' %}?id_tayangan=" + idTayangan, {
+        fetch("{% url 'show:insert_unduhan' %}?id_tayangan=" + idTayangan, {
             method: 'GET',
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}',
@@ -189,7 +189,7 @@
     });
 
     function loadModalFavorit() {
-        fetch('/tayangan/list_favorit/')
+        fetch('/show/list_favorit/')
         .then(response => response.json())
         .then(data => {
             createModal(data.dropdown_options, data.id_tayangan);
@@ -231,7 +231,7 @@
 
         document.getElementById('addFavorite').addEventListener('click', function() {
             var dropdownValue = document.getElementById('dropdown').value;
-            var redirectUrl = `{% url 'tayangan:insert_favorit' %}?id_tayangan={{ series_details.id_tayangan }}&timestamp=${dropdownValue}`;
+            var redirectUrl = `{% url 'show:insert_favorit' %}?id_tayangan={{ series_details.id_tayangan }}&timestamp=${dropdownValue}`;
             window.location.href = redirectUrl;
         });
 
