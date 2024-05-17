@@ -267,19 +267,18 @@ def search_tayangan(request):
 
     search_q = request.GET.get("q")
 
-    with connection.cursor() as cursor:
-        film_search_raw_query = "SELECT t.judul, t.sinopsis, t.url_video_trailer, t.release_date_trailer, t.id FROM FILM f INNER JOIN TAYANGAN t ON (f.id_tayangan = t.id) WHERE t.judul ILIKE '%{query}%';"
-        film_search_query = film_search_raw_query.format(query=search_q)
-        cursor.execute(film_search_query)
-        print(cursor.fetchall)
-        films = cursor.fetchall()
+    if search_q != None:
+        print(search_q)
+        with connection.cursor() as cursor:
+            film_search_raw_query = "SELECT t.judul, t.sinopsis, t.url_video_trailer, t.release_date_trailer, t.id FROM FILM f INNER JOIN TAYANGAN t ON (f.id_tayangan = t.id) WHERE t.judul ILIKE '%{query}%';"
+            film_search_query = film_search_raw_query.format(query=search_q)
+            cursor.execute(film_search_query)
+            films = cursor.fetchall()
 
-        series_search_raw_query = "SELECT t.judul, t.sinopsis, t.url_video_trailer, t.release_date_trailer, t.id FROM SERIES s INNER JOIN TAYANGAN t ON (s.id_tayangan = t.id) WHERE t.judul ILIKE '%{query}%';"
-        series_search_query = series_search_raw_query.format(query=search_q)
-        cursor.execute(series_search_query)
-        seriess = cursor.fetchall()
-
-    print(films)
+            series_search_raw_query = "SELECT t.judul, t.sinopsis, t.url_video_trailer, t.release_date_trailer, t.id FROM SERIES s INNER JOIN TAYANGAN t ON (s.id_tayangan = t.id) WHERE t.judul ILIKE '%{query}%';"
+            series_search_query = series_search_raw_query.format(query=search_q)
+            cursor.execute(series_search_query)
+            seriess = cursor.fetchall()
 
     context = {
         'films': films,
