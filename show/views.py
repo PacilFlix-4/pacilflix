@@ -1,5 +1,7 @@
+import datetime
 import random
-from django.shortcuts import render
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
 from django.db import connection
 
 def execute_query(query):
@@ -228,3 +230,33 @@ def show_tayangan(request):
     }
     response = render(request, 'tayangan.html', context)
     return response
+
+def insert_unduhan(request):
+    username = request.COOKIES.get('username')
+    id_tayangan = request.GET.get('id_tayangan')
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f'INSERT INTO TAYANGAN_TERUNDUH VALUES (\'{id_tayangan}\', \'{username}\', \'{timestamp}\')')
+        
+    connection.commit()
+    return JsonResponse({'status': 'success'})
+
+def go_to_unduhan(request):
+    return redirect('download:daftar_unduhan')
+
+def insert_favorit(request):
+    username = request.COOKIES.get('username')
+    id_tayangan = request.GET.get('id_tayangan')
+    timestamp = request.GET.get('timestamp')
+
+    with connection.cursor() as cursor:
+        cursor.execute(
+            f'INSERT INTO TAYANGAN_MEMILIKI_DAFTAR_FAVORIT VALUES (\'{id_tayangan}\', \'{timestamp}\', \'{username}\')')
+        
+    connection.commit()
+    return redirect('daftar_favorit:daftar_favorit')
+
+def open_ulasan(request, tayangan_id):
+    return redirect('ulasan:ulasan', tayangan_id)

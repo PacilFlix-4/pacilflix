@@ -128,7 +128,7 @@
                         <div class="modal-body" id="modalBody">
                             <!-- Text will be inserted here by JavaScript -->
                         </div>
-                        <a type="button" class="btn btn-primary" href="{% url 'show:film' film_id%}">Menuju Film</a>
+                        <a type="button" class="btn btn-primary" href="{% url 'show:film' film_details.id_tayangan %}">Menuju Film</a>
                     </div>
                 </div>
             </div>
@@ -140,7 +140,7 @@
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         </div>
         <div class="film-reviews">
-            <a type="button" href="{% url 'tayangan:open_ulasan' film_details.id_tayangan %}">Ulasan</button>
+            {% comment %} <a type="button" href="{% url ''  %}">Ulasan</button> {% endcomment %}
         </div>
     </div>
 </body>
@@ -154,7 +154,7 @@
 
 <script>
     function downloadTayangan(idTayangan) {
-        fetch("{% url 'tayangan:insert_unduhan' %}?id_tayangan=" + idTayangan, {
+        fetch("{% url 'show:insert_unduhan' %}?id_tayangan=" + idTayangan, {
             method: 'GET',
             headers: {
                 'X-CSRFToken': '{{ csrf_token }}',
@@ -224,7 +224,7 @@
 
         document.getElementById('addFavorite').addEventListener('click', function() {
             var dropdownValue = document.getElementById('dropdown').value;
-            var redirectUrl = `{% url 'tayangan:insert_favorit' %}?id_tayangan={{ film_details.id_tayangan }}&timestamp=${dropdownValue}`;
+            var redirectUrl = `{% url 'show:insert_favorit' %}?id_tayangan={{ film_details.id_tayangan }}&timestamp=${dropdownValue}`;
             window.location.href = redirectUrl;
         });
 
