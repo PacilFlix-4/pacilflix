@@ -7,6 +7,10 @@
         color: #fff;
         text-align: center;
     }
+    h2 {
+        color: #555;
+        text-align: center;
+    }
     ul, li {
         list-style: none;
         padding: 0;
@@ -50,23 +54,29 @@
 <body>
     <div class="container">
         <div class="film-details">
-            <h1>{{ series_title }}</h1>
+            <h1>Judul: {{ series_title }}</h1>
+            <h2>Sub Judul: {{ series_title }}</h2> 
+            <br><br><br>
 
             <input type="range" class="form-range" min="0" max="100" id="watchrange">
             <br><br><br>
-            <h3 style="color: white;">Other Episodes</h3>
+
+            <button class="primary">Tonton</button> 
+            <br><br><br>
+
+            <h3 style="color: black;">Other Episodes</h3> <br>
             <div class="film-buttons">
                 {% for episode in episodes %}
                     <a href="{% url 'show:episode' episode.1 episode.0 %}">
                         <button class="primary">{{ episode.0|add:1 }}</button>
                     </a>
                 {% endfor %}
-            </div>
+            </div> <br>
             
-            <p>{{ episode.2 }}</p>
-            <p>{{ episode.4 }}</p>
-            <p>Tanggal Rilis: {{ episode.5 }}</p>
+            <p>Sinopsis Episode: {{ episode.2 }}</p>
             <p>Durasi: {{ episode.3 }}</p>
+            <p>URL: {{ episode.4 }}</p>
+            <p>Tanggal Rilis: {{ episode.5 }}</p>
         </div>
     </div>
 </body>
