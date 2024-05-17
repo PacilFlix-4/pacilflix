@@ -28,32 +28,34 @@
                 <th>Dukungan Perangkat</th>
             </tr>
 
+            {% for package in chosen_package %}
             <tr>
-                <td>{{ paket_dipilih.0 }}</td>
-                <td>{{ paket_dipilih.1 }}</td>
-                <td>{{ paket_dipilih.2 }}</td>
-                <td>{{ paket_dipilih.3 }}</td>
+                <td>{{ package.Nama }}</td>
+                <td>{{ package.Harga }}</td>
+                <td>{{ package.Resolusi_Layar }}</td>
+                <td>{{ package.Dukungan_Perangkat }}</td>
             </tr>
+            {% endfor %}
             
         </table>
 
         <br>
         <p>Pilih Metode Pembayaran</p>
 
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Transfer Bank
-            </button>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Transfer Bank</a></li>
-              <li><a class="dropdown-item" href="#">Kartu Kredit</a></li>
-              <li><a class="dropdown-item" href="#">E-Wallet</a></li>
-            </ul>
-          </div>
+        <form method="post" action="{% url 'subscription:insert_new_package' %}">
+            {% csrf_token %}
 
-        <br>
-        <button type="button" class="btn btn-primary">Bayar</button>
+            {% for package in chosen_package %}
+            <input type="hidden" name="nama_paket" value="{{ package.Nama }}">
+            {% endfor %}
 
+            <select name="metode_pembayaran">
+                <option value="virtual account">Virtual Account</option>
+                <option value="kartu kredit">Kartu Kredit</option>
+                <option value="e-wallet">E-Wallet</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Bayar</button>
+        </form>
     </body>
 </html>
 
