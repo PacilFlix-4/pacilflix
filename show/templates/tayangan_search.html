@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #333;
+        color: white;
+    }
+</style>
+{% endblock meta %}
+
+{% block content %}
+<body>
+
+<div class="container">
+  <h1 class="text-center mb-4">Search Tayangan</h1>
+
+  <form method="GET" action="">
+    <div class="input-group mb-3 search-bar">
+      <input type="text" class="form-control" placeholder="Search..." aria-label="Search" aria-describedby="basic-addon2" name="q">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+      </div>
+    </div>
+  </form>
+
+  <h2 class="mt-5 mb-3">Film</h2>
+  <table>
+    <tr>
+      <th>Judul</th>
+      <th>Sinopsis Trailer</th>
+      <th>URL Trailer</th>
+      <th>Tanggal Rilis Trailer</th>
+      <th>Aksi</th>
+    </tr>
+    {% for film in films %}
+    <tr>
+      <td>{{ film.0 }}</td>
+      <td>{{ film.1 }}</td>
+      <td><a href="{{ film.2 }}">Lihat trailer</a></td>
+      <td>{{ film.3 }}</td>
+      <td><a href="{% url 'show:film' film.4 %}" class="btn btn-primary">Tonton</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+
+  <h2 class="mt-5 mb-3">Series</h2>
+  <table>
+    <tr>
+      <th>Judul</th>
+      <th>Sinopsis</th>
+      <th>URL Trailer</th>
+      <th>Tanggal Rilis</th>
+      <th>Aksi</th>
+    </tr>
+    {% for series in seriess %}
+    <tr>
+      <td>{{ series.0 }}</td>
+      <td>{{ series.1 }}</td>
+      <td><a href="{{ series.2 }}">Lihat trailer</a></td>
+      <td>{{ series.3 }}</td>
+      <td><a href="{% url 'show:series' series.4 %}" class="btn btn-primary">Tonton</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+</body>
+{% endblock content %}
