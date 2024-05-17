@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load countries %}
 
 {% block content %}
 <div class="position-absolute top-50 start-50 translate-middle">
@@ -8,40 +9,29 @@
         <form method="POST" id="register-form">
             {% csrf_token %}
             <div class="form-floating mb-3">
-                {{ form.username }}
-                <label for="{{ form.username.id_for_label }}">Username</label>
-                {% if form.username.errors %}
-                    {% for error in form.username.errors %}
-                        <div class="text-danger-emphasis">{{ error|escape }}</div>
-                    {% endfor %}
-                {% endif %}
+                <input type="text" name="username" maxlength="50" autocapitalize="none" autocomplete="username" autofocus="" class="form-control" placeholder="username" required="" id="id_username">
+                <label for="id_username">Username</label>
             </div>
             <div class="form-floating mb-3">
-                {{ form.password1 }}
-                <label for="{{ form.password1.id_for_label }}">Password</label>
-                {% if form.password1.errors %}
-                    {% for error in form.password1.errors %}
-                        <div class="text-danger-emphasis">{{ error|escape }}</div>
-                    {% endfor %}
-                {% endif %}
+                <input type="password" name="password1" maxlength="50" autocomplete="new-password" class="form-control" placeholder="newpassword" required="" id="id_password1">
+                <label for="id_password1">Password</label>
             </div>
             <div class="form-floating mb-3">
-                {{ form.password2 }}
-                <label for="{{ form.password2.id_for_label }}">Confirm password</label>
-                {% if form.password2.errors %}
-                    {% for error in form.password2.errors %}
-                        <div class="text-danger-emphasis">{{ error|escape }}</div>
-                    {% endfor %}
-                {% endif %}
+                <input type="password" name="password2" maxlength="50" autocomplete="new-password" class="form-control" placeholder="pw2" required="" id="id_password2">
+                <label for="id_password2">Confirm password</label>
             </div>
             <div class="form-floating mb-3">
-                {{ form.country }}
-                <label for="{{ form.country.id_for_label }}">Negara Asal</label>
-                {% if form.country.errors %}
-                    {% for error in form.country.errors %}
-                        <div class="text-danger-emphasis">{{ error|escape }}</div>
+                <select name="country" class="form-control" maxlength="50" required="" id="id_country">
+                    {% get_countries as countries %}
+                    {% for country in countries %}
+                        {% if country.name == "Indonesia" %}
+                        <option value="{{ country.name }}" selected>{{ country.name }}</option>
+                        {% else %}
+                        <option value="{{ country.name }}">{{ country.name }}</option>
+                        {% endif %}
                     {% endfor %}
-                {% endif %}
+                </select>
+                <label for="id_country">Negara Asal</label>
             </div>
             <div class="d-grid gap-2 mx-auto mt-2 mb-3">
                 <button type="submit" form="register-form" class="login_btn btn btn-block btn-success bg-gradient">Create my account</button>
