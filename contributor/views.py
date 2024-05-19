@@ -34,6 +34,7 @@ def show_main(request):
 
     context = {
         'contributors': contributors,
+        'selected_tipe': tipe
     }
 
     return render(request, "contributor.html", context)

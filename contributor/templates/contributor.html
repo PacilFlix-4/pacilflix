@@ -19,10 +19,10 @@
 <hr>
 
 <form method="GET">
-    <input type="checkbox" name="tipe" value="sutradara" {% if 'sutradara' in request.GET.tipe %}checked{% endif %}> Sutradara
-    <input type="checkbox" name="tipe" value="pemain" {% if 'pemain' in request.GET.tipe %}checked{% endif %}> Pemain
-    <input type="checkbox" name="tipe" value="penulis_skenario" {% if 'penulis_skenario' in request.GET.tipe %}checked{% endif %}> Penulis Skenario
-    <button type="submit">Cari</button>
+    <input type="checkbox" name="tipe" value="sutradara" {% if 'sutradara' in selected_tipe %}checked{% endif %}> Sutradara
+    <input type="checkbox" name="tipe" value="pemain" {% if 'pemain' in selected_tipe %}checked{% endif %}> Pemain
+    <input type="checkbox" name="tipe" value="penulis_skenario" {% if 'penulis_skenario' in selected_tipe %}checked{% endif %}> Penulis Skenario
+    <button type="submit" class="btn btn-primary">Cari</button>
 </form>
 
 <table class="table">
