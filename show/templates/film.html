@@ -140,6 +140,9 @@
                 {% endfor %}
             </p>
             <p>Sutradara: {{ film_details.sutradara }}</p>
+
+                <a class="btn btn-secondary" role="button" href="{% url 'ulasan:ulasan' film_details.id_tayangan %}">Ulasan</a>
+                
         </div>        
     </div>
 </body>

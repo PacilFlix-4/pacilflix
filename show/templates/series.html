@@ -84,7 +84,7 @@
 <body>
     <div class="container">
         <div class="series-details">
-            <h1>Judul: {{ series_details.judul }}</h1>
+            <h1>{{ series_details.judul }}</h1>
             <br><br><br><br>
 
             <h3 style="color: black;">Episodes</h3>
@@ -146,6 +146,9 @@
                 {% endfor %}
             </p>
             <p>Sutradara: {{ series_details.sutradara }}</p>
+
+            <a class="btn btn-secondary" role="button" href="{% url 'ulasan:ulasan' series_details.id_tayangan %}">Ulasan</a>
+
         </div>
     </div>
 </body>
