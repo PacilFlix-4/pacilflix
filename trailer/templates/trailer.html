@@ -2,196 +2,125 @@
 {% load static %}
 
 {% block meta %}
-    <style>
-        body {
-            background-color: black;
-            color: white;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
-        .search-container {
-            display: flex;
-            align-items: center;
-        }
-        .search-container input[type="text"], .search-container button {
-            padding: 8px;
-            margin: 4px 2px;
-            border: none;
-            border-radius: 4px;
-        }
-        .search-container button {
-            background-color: #555;
-            color: white;
-        }
-        .search-container button:hover {
-            background-color: #666;
-        }
-        select {
-            margin: 20px auto;
-            display: block;
-            padding: 10px 15px;
-            background-color: #333;
-            color: white;
-            border: 1px solid grey;
-            font-size: 18px;
-            width: 300px;
-        }
-        .card-container {
-            display: flex;
-            overflow-x: auto;
-            gap: 20px;
-            padding: 20px;
-        }
-        .card-container::-webkit-scrollbar {
-            height: 8px;
-        }
-        .card-container::-webkit-scrollbar-track {
-            background: #202020;
-        }
-        .card-container::-webkit-scrollbar-thumb {
-            background-color: #555;
-            border-radius: 4px;
-        }
-        .card {
-            flex: 0 0 auto;
-            width: 300px;
-            background: #333;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .card-info {
-            padding: 15px;
-        }
-        .card-info h2, .card-info p {
-            margin-bottom: 10px;
-        }
-        .card-info a {
-            color: #08f;
-            text-decoration: none;
-        }
-        h1 {
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+<style>
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    th {
+        background-color: #333;
+        color: white;
+    }
+</style>
 {% endblock meta %}
 
 {% block content %}
-<h1>Daftar Tayangan</h1>
-<h1 class="left-text">10 Tayangan Terbaik Minggu Ini:</h1>
-<h1><input type="text" placeholder="Search..." name="search"><button type="submit">Search</button> </h1>
-<select>
+<body>
+
+<div class="container">
+  <h1 class="text-center mb-4">Trailer</h1>
+  <div class="text-center mb-3"><a class="btn btn-secondary" role="button" href="{% url 'show:search_tayangan' %}">Search films and series</a></div>
+  
+  
+  <h2 class="mb-3">10 Tayangan Terbaik Minggu ini</h2>
+  <select>
     <option value="global">Top 10 Global</option>
-    <option value="local">Top 10 Indonesia</option>
+    <option value="local">Top 10 Indonesia</option> <br>
 </select>
+  <table>
+    <tr>
+      <th>Peringkat</th>
+      <th>Judul</th>
+      <th>Sinopsis Trailer</th>
+      <th>URL Trailer</th>
+      <th>Tanggal Rilis Trailer</th>
+      <th>Total View 7 Hari Terakhir</th>
+    </tr>
+    {% for item in tayangan_first_half %}
+    <tr>
+      <td>{{ forloop.counter }}</td>
+      <td>{{ item.0 }}</td>
+      <td>{{ item.1 }}</td>
+      <td><a href="{{ item.2 }}">lihat trailer</a></td>
+      <td>{{ item.3 }}</td>
+      <td>{{ item.views }}</td>
+    </tr>
+    {% endfor %}
+    {% for item in tayangan_second_half %}
+    <tr>
+      <td>{{ forloop.counter0|add:6 }}</td>
+      <td>{{ item.0 }}</td>
+      <td>{{ item.1 }}</td>
+      <td><a href="{{ item.2 }}">lihat trailer</a></td>
+      <td>{{ item.3 }}</td>
+      <td>{{ item.views }}</td>
+    </tr>
+    {% endfor %}
+  </table>
 
-<div class="card-container">
-    <div class="card">
-        <div class="card-info">
-            <h2>1. Parasite</h2>
-            <p><strong>Sinopsis Trailer:</strong> Trailer menampilkan intrik dan konflik antara dua keluarga dengan latar belakang sosial yang bertolak belakang. </p>
-            <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/parasite">pacilflix.com/trailer/parasite</a></p>
-            <p><strong>Tanggal Rilis Trailer:</strong> 2019-08-05 </p>
-            <p><strong>Total views 7 hari terakhir:</strong> 9999 </p>
-        </div>
-    </div>
+  <h2 class="mt-5 mb-3">Film</h2>
+  <table>
+    <tr>
+      <th>Judul</th>
+      <th>Sinopsis Trailer</th>
+      <th>URL Trailer</th>
+      <th>Tanggal Rilis Trailer</th>
+    </tr>
+    {% for film in films %}
+    <tr>
+      <td>{{ film.0 }}</td>
+      <td>{{ film.1 }}</td>
+      <td><a href="{{ film.2 }}">Lihat trailer</a></td>
+      <td>{{ film.3 }}</td>
+    </tr>
+    {% endfor %}
+  </table>
 
-    <div class="card">
-      <div class="card-info">
-        <h2>2. A Man Called Otto</h2>
-        <p><strong>Sinopsis:</strong> Seorang pria tua yang kesepian menemukan tujuan baru dalam hidupnya ketika berteman dengan keluarga baru di lingkungannya.</p>
-        <p><strong>Trailer:</strong> Trailer menampilkan Otto, seorang pria tua yang kesepian yang perlahan berubah setelah bertemu tetangga-tetangganya.</p>
-        <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/amancalledotto">pacilflix.com/trailer/amancalledotto</a></p>
-        <p><strong>Tanggal Rilis Trailer:</strong> 2022-10-20</p>
-        <p><strong>Total views 7 hari terakhir:</strong> 9999</p>
-      </div>
-  </div>
+  <h2 class="mt-5 mb-3">Series</h2>
+  <table>
+    <tr>
+      <th>Judul</th>
+      <th>Sinopsis Trailer</th>
+      <th>URL Trailer</th>
+      <th>Tanggal Rilis Trailer</th>
+    </tr>
+    {% for series in seriess %}
+    <tr>
+      <td>{{ series.0 }}</td>
+      <td>{{ series.1 }}</td>
+      <td><a href="{{ series.2 }}">Lihat trailer</a></td>
+      <td>{{ series.3 }}</td>
+    </tr>
+    {% endfor %}
+  </table>
 
-  <div class="card">
-    <div class="card-info">
-        <h2>3. Pitch Perfect</h2>
-        <p><strong>Sinopsis:</strong> Komedi musikal tentang kelompok akapela mahasiswi yang berusaha memenangkan kejuaraan nasional.</p>
-        <p><strong>Trailer:</strong> Trailer menampilkan pertunjukan musik yang energik dan dinamis oleh grup akapela.</p>
-        <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/pitchperfect">pacilflix.com/trailer/pitchperfect</a></p>
-        <p><strong>Tanggal Rilis Trailer:</strong> 2012-06-16</p>
-        <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-info">
-        <h2>4. La La Land</h2>
-        <p><strong>Sinopsis:</strong> Sebuah musikal romantis tentang seorang musisi jazz dan seorang aktris yang berjuang untuk mewujudkan mimpi mereka di Los Angeles.</p>
-        <p><strong>Trailer:</strong> Trailer menampilkan adegan menari dan bernyanyi yang romantis antara dua karakter utama di LA yang penuh warna.</p>
-        <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/lalaland">pacilflix.com/trailer/lalaland</a></p>
-        <p><strong>Tanggal Rilis Trailer:</strong> 2016-11-03</p>
-        <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-    </div>
-  </div>
-
-  <div class="card">
-      <div class="card-info">
-          <h2>5. The Greatest Showman</h2>
-          <p><strong>Sinopsis:</strong> Kisah P.T. Barnum dan penciptaan sirkus yang menjadi pertunjukan terbesar di bumi.</p>
-          <p><strong>Trailer:</strong> Trailer menampilkan musikal yang spektakuler tentang impian dan hiburan.</p>
-          <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/thegreatestshowman">pacilflix.com/trailer/thegreatestshowman</a></p>
-          <p><strong>Tanggal Rilis Trailer:</strong> 2017-06-28</p>
-          <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-      </div>
-  </div>
-  
-  <div class="card">
-      <div class="card-info">
-          <h2>6. Jurassic World</h2>
-          <p><strong>Sinopsis:</strong> Taman hiburan dengan dinosaurus hasil rekayasa genetika yang berubah menjadi kacau setelah salah satu dinosaurus lepas.</p>
-          <p><strong>Trailer:</strong> Trailer menampilkan adegan menegangkan ketika dinosaurus mulai mengamuk di taman.</p>
-          <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/jurassicworld">pacilflix.com/trailer/jurassicworld</a></p>
-          <p><strong>Tanggal Rilis Trailer:</strong> 2014-11-26</p>
-          <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-      </div>
-  </div>
-  
-  <div class="card">
-      <div class="card-info">
-          <h2>7. The Hunger Games: The Ballad of Songbirds & Snakes</h2>
-          <p><strong>Sinopsis:</strong> Prekuel dari The Hunger Games yang mengisahkan asal mula Presiden Snow dan awal dari Hunger Games itu sendiri.</p>
-          <p><strong>Trailer:</strong> Trailer menampilkan awal mula cerita Hunger Games dan peran muda Coriolanus Snow.</p>
-          <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/theballadofsongbirdsandsnake">pacilflix.com/trailer/theballadofsongbirdsandsnake</a></p>
-          <p><strong>Tanggal Rilis Trailer:</strong> 2023-04-28</p>
-          <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-      </div>
-  </div>
-  
-  <div class="card">
-      <div class="card-info">
-          <h2>8. The Maze Runner</h2>
-          <p><strong>Sinopsis:</strong> Seorang remaja terbangun tanpa ingatan di sebuah labirin raksasa bersama dengan kelompok anak laki-laki lain yang harus menemukan jalan keluar.</p>
-          <p><strong>Trailer:</strong> Trailer menampilkan adegan mencekam dari usaha para remaja untuk melarikan diri dari labirin yang berbahaya.</p>
-          <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/themazerunner">pacilflix.com/trailer/themazerunner</a></p>
-          <p><strong>Tanggal Rilis Trailer:</strong> 2018-03-18</p>
-          <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-      </div>
-  </div>
-  
-  <div class="card">
-      <div class="card-info">
-          <h2>9. Godzilla King of The Monsters</h2>
-          <p><strong>Sinopsis:</strong> Godzilla menghadapi para monster raksasa lainnya termasuk Mothra, Rodan, dan musuh bebuyutannya, King Ghidorah.</p>
-          <p><strong>Trailer:</strong> Trailer menampilkan pertarungan epik antara Godzilla dan musuh-musuhnya.</p>
-          <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/godzillakingofthemonsters">pacilflix.com/trailer/godzillakingofthemonsters</a></p>
-          <p><strong>Tanggal Rilis Trailer:</strong> 2019-04-23</p>
-          <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-      </div>
-  </div>
-
-  <div class="card">
-    <div class="card-info">
-        <h2>10. Dune</h2>
-        <p><strong>Sinopsis:</strong> Adaptasi dari novel sci-fi oleh Frank Herbert tentang seorang pemuda bangsawan yang bertarung untuk mengendalikan planet gurun yang merupakan satu-satunya sumber bahan paling berharga di alam semesta.</p>
-        <p><strong>Trailer:</strong> Trailer menampilkan perang untuk kekuasaan dan kontrol atas spice di planet Arrakis.</p>
-        <p><strong>URL Trailer:</strong> <a href="pacilflix.com/trailer/dune">pacilflix.com/trailer/dune</a></p>
-        <p><strong>Tanggal Rilis Trailer:</strong> 2020-09-09</p>
-        <p><strong>Total views 7 hari terakhir:</strong> 999</p>
-    </div>
+  <h2 class="mb-3">Hasil Pencarian</h2>
+  <table>
+    <tr>
+      <th>Judul</th>
+      <th>Sinopsis Trailer</th>
+      <th>URL Trailer</th>
+      <th>Tanggal Rilis Trailer</th>
+    </tr>
+    {% for result in search_results %}
+    <tr>
+      <td>{{ result.judul }}</td>
+      <td>{{ result.sinopsis_trailer }}</td>
+      <td><a href="{{ result.url_trailer }}">Lihat Trailer</a></td>
+      <td>{{ result.tanggal_rilis_trailer }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4">No results found.</td>
+    </tr>
+    {% endfor %}
+  </table>
 </div>
+</body>
 {% endblock content %}
