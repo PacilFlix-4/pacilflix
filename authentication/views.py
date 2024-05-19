@@ -14,7 +14,7 @@ def get_pengguna(request):
 
 def show_landing(request):
     if get_pengguna(request) != None:
-        return redirect(reverse("show:show_main"))
+        return redirect(reverse("show:tayangan"))
     
     return render(request, 'main.html', context={})
 

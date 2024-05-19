@@ -1,7 +1,9 @@
 from django.urls import path
-from review.views import show_main, show_ulasan
+from .views import *
+
+app_name = 'ulasan'
 
 urlpatterns = [
-    path('', show_main, name='show_main'),
-    path('ulasan', show_ulasan, name='ulasan'),
+    path('show/<id_tayangan>', ulasan, name='ulasan'),
+    path('show/<id_tayangan>', submit_ulasan, name='submit_ulasan')
 ]
