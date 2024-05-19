@@ -1,12 +1,18 @@
 import datetime
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from utils.query import query
 from django.views.decorators.csrf import csrf_exempt
+from authentication.views import get_pengguna
 
 # Create your views here.
-def show_packages(request):
-    username = request.user.username
+
+def show_main(request):
+    username = get_pengguna(request)
+
+    if username == None:
+        return redirect(reverse("show:show_main"))
 
     active_package = query(
         f"""
@@ -20,7 +26,7 @@ def show_packages(request):
         FROM TRANSACTION t
         JOIN PAKET p ON t.nama_paket = p.nama
         LEFT JOIN DUKUNGAN_PERANGKAT d ON t.nama_paket = d.nama_paket
-        WHERE t.username = 'kudaponi11' AND t.end_date_time >= CURRENT_DATE
+        WHERE t.username = '{username}' AND t.end_date_time >= CURRENT_DATE
         GROUP BY t.nama_paket, p.harga, p.resolusi_layar, t.start_date_time, t.end_date_time;
         """
     )
@@ -55,13 +61,13 @@ def show_packages(request):
             p.harga AS "Harga"
         FROM TRANSACTION t
         JOIN PAKET p ON t.nama_paket = p.nama
-        WHERE t.username = 'kudaponi11'
+        WHERE t.username = '{username}'
         GROUP BY t.nama_paket, t.start_date_time, t.end_date_time, t.metode_pembayaran, t.timestamp_pembayaran, p.harga
         ORDER BY t.start_date_time ASC;
         """
     )
 
-    if not available_packages:
+    if not transaction_history:
         available_packages = [{"Nama": "-", "Tanggal_Dimulai": "-", "Tanggal_Akhir": "-", "Metode_Pembayaran": "-", "Tanggal_Transaksi": "-", "Harga": "-"}]
 
     context = {
@@ -70,15 +76,14 @@ def show_packages(request):
         'transaction_history': transaction_history
     }
 
-    # print(active_package)
-
-    # print(available_packages)
-
-    # print(transaction_history)
-
     return render(request, "subscription.html", context)
 
 def show_buy_packages(request, package_name):
+    username = get_pengguna(request)
+
+    if username == None:
+        return redirect(reverse("show:show_main"))
+
     chosen_package = query(
         f"""
         SELECT 
@@ -101,20 +106,17 @@ def show_buy_packages(request, package_name):
 
 @csrf_exempt
 def insert_new_package(request):
+    username = get_pengguna(request)
+
+    if username == None:
+        return redirect(reverse("show:show_main"))
+    
     if request.method == 'POST':
-        username = 'kudaponi11'
         nama_paket = request.POST.get('nama_paket') 
         metode_pembayaran = request.POST.get('metode_pembayaran') 
         timestamp_pembayaran = datetime.datetime.now()
         start_date_time = timestamp_pembayaran.date()
         end_date_time = (timestamp_pembayaran + datetime.timedelta(days=30)).date()
-
-        print(username)
-        print(nama_paket)
-        print(metode_pembayaran)
-        print(timestamp_pembayaran)
-        print(start_date_time)
-        print(end_date_time)
 
         new_package = query(
         f"""INSERT INTO TRANSACTION VALUES(
@@ -129,7 +131,7 @@ def insert_new_package(request):
 
         response_data = {'status': 'success', 'message': 'Pembayaran berhasil'}
         json_response = JsonResponse(response_data)
-        return redirect('subscription:show_packages')
+        return redirect('subscription:show_main')
     
     else:
         return JsonResponse({'status': 'error', 'message': 'Forbidden HTTP Method'}, status=405)

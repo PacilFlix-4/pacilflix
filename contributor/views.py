@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from utils.query import query
+from authentication.views import get_pengguna;
 
 # Create your views here.
-def show_contributors(request):
+def show_main(request):
+    if get_pengguna(request) == None:
+        return redirect(reverse("show:show_main"))
+
     tipe = request.GET.getlist("tipe")
     if not tipe:
         tipe = ["sutradara", "pemain", "penulis_skenario"]
@@ -30,7 +35,5 @@ def show_contributors(request):
     context = {
         'contributors': contributors,
     }
-    print(tipe_str)
-    print("\n")
-    print(contributors)
+
     return render(request, "contributor.html", context)
