@@ -9,64 +9,45 @@
 {% endblock meta %}
 
 {% block content %}
-<html>
-    <head>
-        <style>
-            th, td {
-                padding-right: 15px;
-            }
-        </style>
-    </head>
-    <body>
-        <h1>Daftar Kontributor</h1>
-        <hr>
+<style>
+    th, td {
+        padding-right: 15px;
+    }
+</style>
+    
+<h1>Daftar Kontributor</h1>
+<hr>
 
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-            Sutradara
-            </label>
-        </div>
+<form method="GET">
+    <input type="checkbox" name="tipe" value="sutradara" {% if 'sutradara' in request.GET.tipe %}checked{% endif %}> Sutradara
+    <input type="checkbox" name="tipe" value="pemain" {% if 'pemain' in request.GET.tipe %}checked{% endif %}> Pemain
+    <input type="checkbox" name="tipe" value="penulis_skenario" {% if 'penulis_skenario' in request.GET.tipe %}checked{% endif %}> Penulis Skenario
+    <button type="submit">Cari</button>
+</form>
 
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-            Penulis Skenario
-            </label>
-        </div>
+<table class="table">
+    <tr>
+        <th>Nama</th>
+        <th>Tipe</th>
+        <th>Jenis Kelamin</th>
+        <th>Kewarganegaraan</th>
+    </tr>
 
-        <div>
-            <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-            <label class="form-check-label" for="flexCheckChecked">
-                Pemain
-            </label>
-        </div>
+    {% for contributor in contributors %}
+    <tr>
+        <td>{{ contributor.nama }}</td>
+        <td>{{ contributor.tipe }}</td>
+        <td>{{ contributor.jenis_kelamin|yesno:"perempuan,laki-laki" }}</td>
+        <td>{{ contributor.kewarganegaraan }}</td>
 
-        <br>
+    {% empty %}
+        <td>Tidak ada kontributor yang ditemukan.</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        </tr>
+    {% endfor %}
 
-        <table>
-            <tr>
-                <th>Nama</th>
-                <th>Tipe</th>
-                <th>Jenis Kelamin</th>
-                <th>Kewarganegaraan</th>
-            </tr>
-
-            <tr>
-
-            </tr>
-        
-            {% for contributor in contributors %}
-                <tr>
-                    <td>{{contributor.0}}</td>
-                    <td>{{contributor.1}}</td>
-                    <td>{{contributor.2}}</td>
-                    <td>{{contributor.3}}</td>
-                </tr>
-            {% endfor %}
-        </table>
-    </body>
-</html>
+</table>
 
 {% endblock content %}

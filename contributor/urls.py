@@ -1,5 +1,5 @@
 from django.urls import path
-from contributor.views import show_main
+from contributor.views import *
 
 app_name = 'contributor'
 

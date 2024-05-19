@@ -29,15 +29,19 @@
                 <th>Tanggal Mulai</th>
                 <th>Tanggal Akhir</th>
             </tr>
+
+            {% for package in active_package %}
             <tr>
-                <td>{{ paket_aktif.0.0 }}</td>
-                <td>{{ paket_aktif.0.1 }}</td>
-                <td>{{ paket_aktif.0.2 }}</td>
-                <td>{{ paket_aktif.0.3 }}</td>
-                <td>{{ paket_aktif.1 }}</td>
-                <td>{{ paket_aktif.2 }}</td>
+                <td>{{ package.Nama }}</td>
+                <td>{{ package.Harga }}</td>
+                <td>{{ package.Resolusi_Layar }}</td>
+                <td>{{ package.Dukungan_Perangkat }}</td>
+                <td>{{ package.Tanggal_Dimulai }}</td>
+                <td>{{ package.Tanggal_Akhir }}</td>
             </tr>
+            {% endfor %}
         </table>
+        
 
         <br>
         <p>Pilih Paket Lain:</p>
@@ -49,23 +53,23 @@
                 <th>Dukungan Perangkat</th>
                 <th>Beli</th>
             </tr>
-            {% for paket in semua_paket %}
+            {% for package in available_packages %}
             <tr>
-                <td>{{ paket.0 }}</td>
-                <td>{{ paket.1 }}</td>
-                <td>{{ paket.2 }}</td>
-                <td>{{ paket.3 }}</td>
+                <td>{{ package.Nama }}</td>
+                <td>{{ package.Harga }}</td>
+                <td>{{ package.Resolusi_Layar }}</td>
+                <td>{{ package.Dukungan_Perangkat }}</td>
                 <td>
-                    <button class="btn btn-primary">
-                        Beli
-                    </button>
+                    <a href="{% url 'subscription:show_buy_packages' package.Nama %}">
+                        <button class="btn btn-primary">Beli</button>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
         </table>
 
         <br>
-        <p>Riwayat Transaksi</p>
+        <p>Riwayat Transaksi:</p>
         <table>
             <tr>
                 <th>Nama</th>
@@ -75,14 +79,14 @@
                 <th>Tanggal Transaksi</th>
                 <th>Total Harga</th>
             </tr>
-            {% for transaksi in riwayat_transaksi %}
+            {% for transaction in transaction_history %}
             <tr>
-                <td>{{ transaksi.0 }}</td>
-                <td>{{ transaksi.1 }}</td>
-                <td>{{ transaksi.2 }}</td>
-                <td>{{ transaksi.3 }}</td>
-                <td>{{ transaksi.4 }}</td>
-                <td>{{ transaksi.5 }}</td>
+                <td>{{ transaction.Nama }}</td>
+                <td>{{ transaction.Tanggal_Dimulai }}</td>
+                <td>{{ transaction.Tanggal_Akhir }}</td>
+                <td>{{ transaction.Metode_Pembayaran }}</td>
+                <td>{{ transaction.Tanggal_Transaksi }}</td>
+                <td>{{ transaction.Harga }}</td>
             </tr>
             {% endfor %}
         </table>

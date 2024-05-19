@@ -1,26 +1,137 @@
-from django.shortcuts import render
-
-paket = [["basic", "Rp25000", "720", "handphone"], 
-         ["standard", "Rp50000", "1080", "handphone, tablet, laptop"], 
-         ["premium", "Rp70000", "2160", "handphone, tablet, laptop, smart tv"]]
+import datetime
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from utils.query import query
+from django.views.decorators.csrf import csrf_exempt
+from authentication.views import get_pengguna
 
 # Create your views here.
+
 def show_main(request):
-    paket_aktif = [paket[2], "02/04/2024", "02/05/2024"]
-    riwayat_transaksi = [["basic", "30/01/2024", "02/03/2024", "Transfer Bank", "30/01/2024", "Rp25000"], 
-                         ["standard", "02/04/2024", "02/05/2024", "E-Wallet", "02/04/2024", "Rp50000"]]
+    username = get_pengguna(request)
+
+    if username == None:
+        return redirect(reverse("show:show_main"))
+
+    active_package = query(
+        f"""
+        SELECT 
+            t.nama_paket AS "Nama",
+            p.harga AS "Harga",
+            p.resolusi_layar AS "Resolusi_Layar",
+            STRING_AGG(d.dukungan_perangkat, ', ') AS "Dukungan_Perangkat",
+            t.start_date_time AS "Tanggal_Dimulai",
+            t.end_date_time AS "Tanggal_Akhir"
+        FROM TRANSACTION t
+        JOIN PAKET p ON t.nama_paket = p.nama
+        LEFT JOIN DUKUNGAN_PERANGKAT d ON t.nama_paket = d.nama_paket
+        WHERE t.username = '{username}' AND t.end_date_time >= CURRENT_DATE
+        GROUP BY t.nama_paket, p.harga, p.resolusi_layar, t.start_date_time, t.end_date_time;
+        """
+    )
+
+    if not active_package:
+        active_package = [{"Nama": "-", "Harga": "-", "Resolusi_Layar": "-", "Dukungan_Perangkat": "-", "Tanggal_Dimulai": "-", "Tanggal_Akhir": "-"}]
+
+    available_packages = query(
+        f"""
+        SELECT 
+            p.nama AS "Nama",
+            p.harga AS "Harga",
+            p.resolusi_layar AS "Resolusi_Layar",
+            STRING_AGG(d.dukungan_perangkat, ', ') AS "Dukungan_Perangkat"
+        FROM PAKET p
+        LEFT JOIN DUKUNGAN_PERANGKAT d ON p.nama = d.nama_paket
+        GROUP BY p.nama, p.harga, p.resolusi_layar
+        ORDER BY p.harga ASC;
+        """)
+
+    if not available_packages:
+        available_packages = [{"Nama": "-", "Harga": "-", "Resolusi_Layar": "-", "Dukungan_Perangkat": "-"}]
+
+    transaction_history = query(
+        f"""
+        SELECT 
+            t.nama_paket AS "Nama",
+            t.start_date_time AS "Tanggal_Dimulai",
+            t.end_date_time AS "Tanggal_Akhir",
+            t.metode_pembayaran AS "Metode_Pembayaran",
+            t.timestamp_pembayaran AS "Tanggal_Transaksi",
+            p.harga AS "Harga"
+        FROM TRANSACTION t
+        JOIN PAKET p ON t.nama_paket = p.nama
+        WHERE t.username = '{username}'
+        GROUP BY t.nama_paket, t.start_date_time, t.end_date_time, t.metode_pembayaran, t.timestamp_pembayaran, p.harga
+        ORDER BY t.start_date_time ASC;
+        """
+    )
+
+    if not transaction_history:
+        available_packages = [{"Nama": "-", "Tanggal_Dimulai": "-", "Tanggal_Akhir": "-", "Metode_Pembayaran": "-", "Tanggal_Transaksi": "-", "Harga": "-"}]
+
     context = {
-        'paket_aktif': paket_aktif,
-        'semua_paket': paket,
-        'riwayat_transaksi': riwayat_transaksi
+        'active_package': active_package,
+        'available_packages': available_packages,
+        'transaction_history': transaction_history
     }
 
     return render(request, "subscription.html", context)
 
-def show_buy_page(request):
-    paket_dipilih = paket[2]
+def show_buy_packages(request, package_name):
+    username = get_pengguna(request)
+
+    if username == None:
+        return redirect(reverse("show:show_main"))
+
+    chosen_package = query(
+        f"""
+        SELECT 
+            p.nama AS "Nama",
+            p.harga AS "Harga",
+            p.resolusi_layar AS "Resolusi_Layar",
+            STRING_AGG(d.dukungan_perangkat, ', ') AS "Dukungan_Perangkat"
+        FROM PAKET p
+        LEFT JOIN DUKUNGAN_PERANGKAT d ON p.nama = d.nama_paket
+        WHERE p.nama = '{package_name}'
+        GROUP BY p.nama, p.harga, p.resolusi_layar
+        ORDER BY p.harga ASC;
+        """
+    )
     context = {
-        'paket_dipilih': paket_dipilih
+        'chosen_package': chosen_package
     }
 
     return render(request, "buy.html", context)
+
+@csrf_exempt
+def insert_new_package(request):
+    username = get_pengguna(request)
+
+    if username == None:
+        return redirect(reverse("show:show_main"))
+    
+    if request.method == 'POST':
+        nama_paket = request.POST.get('nama_paket') 
+        metode_pembayaran = request.POST.get('metode_pembayaran') 
+        timestamp_pembayaran = datetime.datetime.now()
+        start_date_time = timestamp_pembayaran.date()
+        end_date_time = (timestamp_pembayaran + datetime.timedelta(days=30)).date()
+
+        new_package = query(
+        f"""INSERT INTO TRANSACTION VALUES(
+        '{username}', '{start_date_time}', '{end_date_time}', '{nama_paket}', 
+        '{metode_pembayaran}', '{timestamp_pembayaran}'
+        );
+        """
+        )
+
+        if isinstance(new_package, Exception):
+            return JsonResponse({'status': 'error', 'message': str(new_package)}, status=500)
+
+        response_data = {'status': 'success', 'message': 'Pembayaran berhasil'}
+        json_response = JsonResponse(response_data)
+        return redirect('subscription:show_main')
+    
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Forbidden HTTP Method'}, status=405)
