@@ -1,50 +1,136 @@
-from itertools import product
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core import serializers
+from django.db import connection
+from django.http import HttpResponseNotAllowed, JsonResponse
+from django.shortcuts import redirect, render
+from authentication.views import get_pengguna
 
-favorite_shows = [['Parasite', 'rainbowbridge', '2024-01-01 21:18:29'],
-    ['The Hunger Games: The Ballad of Songbirds & Snakes', 'rainbowbridge', '2024-01-02 12:50:07'],
-    ['Bridgerton', 'kentangnyamekdi', '2024-01-02 21:12:20'],
-    ['La La Land', 'cottonthedog', '2024-01-03 22:43:57'],
-    ['The Maze Runner', 'cottonthedog', '2024-01-04 15:57:18'],
-    ['Pitch Perfect', 'cottonthedog', '2024-01-05 21:18:29'],
-    ['Wednesdays', 'kodokronggeng', '2024-01-04 15:26:42'],
-    ['The Silent Sea', 'berkelapkelip', '2024-01-05 17:16:15'],
-    ['Alice in Borderland', 'berkelapkelip', '2024-01-06 15:26:42'],
-    ['A Man Called Otto', 'berkelapkelip', '2024-01-07 18:17:47'],
-    ['Dune', 'parahsihtamol', '2024-01-06 18:26:33'],
-    ['Bridgerton', 'aizadiguno', '2024-01-07 22:27:29'],
-    ['The Greatest Showman', 'aizadiguno', '2024-01-08 22:22:39'],
-    ['WandaVision', 'aizadiguno', '2024-01-09 11:31:56'],
-    ['Godzilla King of The Monsters', 'kudaponi11', '2024-01-08 21:07:15'],
-    ['The Greatest Showman', 'kudaponi11', '2024-01-08 21:07:15']]
+def get_daftar_favorit(username):
+    query = f"""
+        SELECT judul, timestamp
+        FROM DAFTAR_FAVORIT
+        WHERE username = '{username}';
+    """
 
-def show_main(request):
+    cursor = connection.cursor()
+    cursor.execute(query)
+    daftar_favorit = cursor.fetchall()
+    cursor.close()
+
+    return daftar_favorit
+
+def get_tayangan_favorit(username, timestamp):
+    query = f"""
+        SELECT t.judul, t.id, subquery.timestamp
+        FROM TAYANGAN t
+        JOIN (
+            SELECT tmdf.id_tayangan, tmdf.timestamp
+            FROM TAYANGAN_MEMILIKI_DAFTAR_FAVORIT tmdf
+            JOIN DAFTAR_FAVORIT df ON tmdf.timestamp = df.timestamp AND tmdf.username = df.username
+            WHERE tmdf.username = '{username}' AND tmdf.timestamp = '{timestamp}'
+        ) AS subquery ON t.id = subquery.id_tayangan;
+    """
+
+    cursor = connection.cursor()
+    cursor.execute(query)
+    tayangan_favorit = cursor.fetchall()
+    cursor.close()
+
+    return tayangan_favorit
+
+def show_favorite(request):
+    username = get_pengguna(request)
+    daftar_favorit = get_daftar_favorit(username)
+    
     context = {
-        'favorite_shows': favorite_shows,
+        'pengguna': username,
+        'daftar_favorit': daftar_favorit
     }
 
-    return render(request, "favorite.html", context)
+    return render(request, "daftar_favorit.html", context)
 
-def show_xml(request):
-    data = favorite_shows
-    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+def show_tayangan_favorit(request, timestamp):
+    username = get_pengguna(request)
+    daftar_favorit = get_daftar_favorit(username)
+    tayangan_favorit = get_tayangan_favorit(username, timestamp)
 
-def show_xml_by_id(request, id):
-    data = favorite_shows
-    return HttpResponse(serializers.serialize("xml", data), content_type="application/xml")
+    context = {
+        'pengguna': username,
+        'daftar_favorit': daftar_favorit[0][0],
+        'tayangan_favorit': tayangan_favorit
+    }
 
-def show_json(request):
-    data = favorite_shows
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+    return render(request, "tayangan_favorit.html", context)
 
-def show_json_by_id(request, id):
-    data = favorite_shows
-    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
+def add_tayangan_favorit(request, timestamp, id_tayangan):
+    username = get_pengguna(request)
 
-def add_favorite_show(request, id):
-    data = "" # Belum implement
+    if request.method == 'POST':
+        query_update = f"""
+            INSERT INTO TAYANGAN_MEMILIKI_DAFTAR_FAVORIT (id_tayangan, timestamp, username)
+            VALUES ('{id_tayangan}', '{timestamp}', '{username}')
+        """
 
-def delete_favorite_show(request, id):
-    data = "" # Belum implement
+        cursor = connection.cursor()
+        cursor.execute(query_update)
+        row_added = cursor.rowcount
+        cursor.close()
+
+        if row_added > 0:
+            return redirect('favorite:show_tayangan_favorit', timestamp=timestamp)
+        else:
+            return redirect('favorite:show_tayangan_favorit', timestamp=timestamp)
+        
+    else:
+        if request.method == 'GET':
+            return HttpResponseNotAllowed(['POST'], 'This action can only be performed with POST.')
+        else:
+            return HttpResponseNotAllowed(['POST'])
+        
+def delete_daftar_favorit(request, timestamp):
+    username = get_pengguna(request)
+
+    if request.method == 'POST':
+        query_update = f"""
+            DELETE FROM DAFTAR_FAVORIT
+            WHERE timestamp = '{timestamp}' AND username = '{username}';
+        """
+
+        cursor = connection.cursor()
+        cursor.execute(query_update)
+        row_deleted = cursor.rowcount
+        cursor.close()
+
+        if row_deleted > 0:
+            return redirect('favorite:show_favorite')
+        else:
+            return redirect('favorite:show_favorite')
+        
+    else:
+        if request.method == 'GET':
+            return HttpResponseNotAllowed(['POST'], 'This action can only be performed with POST.')
+        else:
+            return HttpResponseNotAllowed(['POST'])
+        
+def delete_tayangan_favorit(request, timestamp, id_tayangan):
+    username = get_pengguna(request)
+
+    if request.method == 'POST':
+        query_update = f"""
+            DELETE FROM TAYANGAN_MEMILIKI_DAFTAR_FAVORIT
+            WHERE id_tayangan = '{id_tayangan}' AND timestamp = '{timestamp}' AND username = '{username}';
+        """
+
+        cursor = connection.cursor()
+        cursor.execute(query_update)
+        row_deleted = cursor.rowcount
+        cursor.close()
+
+        if row_deleted > 0:
+            return redirect('favorite:show_tayangan_favorit', timestamp=timestamp)
+        else:
+            return redirect('favorite:show_tayangan_favorit', timestamp=timestamp)
+        
+    else:
+        if request.method == 'GET':
+            return HttpResponseNotAllowed(['POST'], 'This action can only be performed with POST.')
+        else:
+            return HttpResponseNotAllowed(['POST'])

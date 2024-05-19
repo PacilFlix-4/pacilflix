@@ -19,14 +19,15 @@
             <th>Aksi</th>
         </tr>
     
-        {% for show in downloaded_shows %}
+        {% for tayangan in daftar_unduhan %}
             <tr>
-                <td>{{ show.0 }}</td>
-                <td>{{ show.2 }}</td>
+                <td>{{ tayangan.0 }}</td>
+                <td>{{ tayangan.2 }}</td>
                 <td>
-                    <button onclick="showModal()" class="btn btn-outline-danger">
-                        Hapus
-                    </button>
+                    <form action="{% url 'download:delete_unduhan' tayangan.1 tayangan.2 %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">Hapus</button>
+                    </form>
                 </td>
             </tr>
         {% endfor %}
@@ -34,3 +35,24 @@
 </body>
 </html>
 {% endblock content %}
+
+{% block scripts %}
+<script>
+    function deleteModal(title) {
+        var modal = document.getElementById("favoriteModal");
+        judulTayangan.innerHTML = title;
+        modal.style.display = "flex";
+    }
+
+    window.onclick = function(event) {
+        var favoriteModal = document.getElementById("favoriteModal");
+        
+        if (event.target == favoriteModal) {
+            favoriteModal.style.display = "none";
+        }
+        if (event.target == downloadModal) {
+            downloadModal.style.display = "none";
+        }
+    }
+</script>
+{% endblock scripts %}
