@@ -12,7 +12,7 @@ def show_main(request):
     username = get_pengguna(request)
 
     if username == None:
-        return redirect(reverse("show:show_main"))
+        return redirect(reverse("authentication:login"))
 
     active_package = query(
         f"""

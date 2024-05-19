@@ -6,7 +6,7 @@ from authentication.views import get_pengguna;
 # Create your views here.
 def show_main(request):
     if get_pengguna(request) == None:
-        return redirect(reverse("show:show_main"))
+        return redirect(reverse("authentication:login"))
 
     tipe = request.GET.getlist("tipe")
     if not tipe:

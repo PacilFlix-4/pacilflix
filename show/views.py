@@ -1,8 +1,10 @@
 import datetime
 import random
-from django.http import JsonResponse
+from django.http import JsonResponse,  HttpResponseNotFound
 from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.db import connection
+from authentication.views import get_pengguna
 
 def execute_query(query):
     with connection.cursor() as cursor:
@@ -14,6 +16,9 @@ def execute_query(query):
         ]
 
 def show_episode(request, series_id, episode_number):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+    
     episode_number = int(episode_number)
     with connection.cursor() as cursor:
         cursor.execute(f"SELECT judul FROM TAYANGAN WHERE id = '{series_id}'")
@@ -36,6 +41,9 @@ def show_episode(request, series_id, episode_number):
     return render(request, 'episode.html', context)
 
 def show_film(request, film_id):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+
     with connection.cursor() as cursor:
         cursor.execute(
             f"SELECT judul, sinopsis, asal_negara FROM TAYANGAN WHERE id = '{film_id}'"
@@ -113,6 +121,9 @@ def show_film(request, film_id):
     return render(request, 'film.html', {'film_details': film_details})
 
 def show_series(request, series_id):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+    
     episodes = []
     with connection.cursor() as cursor:
         cursor.execute(
@@ -190,6 +201,9 @@ def show_series(request, series_id):
     return render(request, 'series.html', {'series_details': series_details})
 
 def show_tayangan(request):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+    
     films = []
     seriess = []
 
@@ -232,9 +246,9 @@ def show_tayangan(request):
     return response
 
 def insert_unduhan(request):
-    username = request.COOKIES.get('username')
+    username = get_pengguna(request)
     id_tayangan = request.GET.get('id_tayangan')
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     with connection.cursor() as cursor:
         cursor.execute(
@@ -247,7 +261,7 @@ def go_to_unduhan(request):
     return redirect('download:daftar_unduhan')
 
 def insert_favorit(request):
-    username = request.COOKIES.get('username')
+    username = get_pengguna(request)
     id_tayangan = request.GET.get('id_tayangan')
     timestamp = request.GET.get('timestamp')
 
@@ -256,12 +270,15 @@ def insert_favorit(request):
             f'INSERT INTO TAYANGAN_MEMILIKI_DAFTAR_FAVORIT VALUES (\'{id_tayangan}\', \'{timestamp}\', \'{username}\')')
         
     connection.commit()
-    return redirect('daftar_favorit:daftar_favorit')
+    return redirect('daftar_favorit:show_tayangan_favorit')
 
 def open_ulasan(request, tayangan_id):
     return redirect('ulasan:ulasan', tayangan_id)
 
 def search_tayangan(request):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+    
     films = []
     seriess = []
 

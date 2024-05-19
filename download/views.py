@@ -2,7 +2,8 @@ import datetime
 from django.db import connection
 from django.db import IntegrityError
 from django.shortcuts import redirect, render
-from django.http import HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponseNotAllowed
+from django.urls import reverse
 from authentication.views import get_pengguna
 
 def get_unduhan(username):
@@ -22,6 +23,9 @@ def get_unduhan(username):
     return unduhan
 
 def show_download(request):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+    
     username = get_pengguna(request)
     daftar_favorit = get_unduhan(username)
     

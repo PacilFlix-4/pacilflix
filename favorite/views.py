@@ -1,5 +1,6 @@
 from django.db import connection
-from django.http import HttpResponseNotAllowed, JsonResponse
+from django.http import HttpResponseNotAllowed
+from django.urls import reverse
 from django.shortcuts import redirect, render
 from authentication.views import get_pengguna
 
@@ -37,6 +38,9 @@ def get_tayangan_favorit(username, timestamp):
     return tayangan_favorit
 
 def show_favorite(request):
+    if get_pengguna(request) == None:
+        return redirect(reverse("authentication:login"))
+    
     username = get_pengguna(request)
     daftar_favorit = get_daftar_favorit(username)
     
