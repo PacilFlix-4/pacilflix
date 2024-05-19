@@ -26,11 +26,10 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        raw_query = "SELECT * FROM PENGGUNA WHERE username='{username}' AND password='{password}'"
-        query = raw_query.format(username=username, password=password)
+        raw_query = "SELECT * FROM PENGGUNA WHERE username=%s AND password=%s"
 
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(raw_query, [username, password])
         query_output = cursor.fetchall()
         cursor.close()
 
@@ -52,12 +51,11 @@ def user_register(request):
         password = request.POST.get('password1')
         country = request.POST.get('country')
 
-        raw_query = "INSERT INTO PENGGUNA VALUES ('{username}', '{password}', '{country}')"
-        query = raw_query.format(username=username, password=password, country=country)
+        raw_query = "INSERT INTO PENGGUNA VALUES (%s, %s, %s)"
 
         cursor = connection.cursor()
         try:
-            cursor.execute(query)
+            cursor.execute(raw_query, [username, password, country])
             request.session["pengguna"] = username
             response = HttpResponseRedirect(reverse("show:show_main"))
             return response
