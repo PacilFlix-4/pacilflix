@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+<body>
+    <h1>Daftar Tayangan Favorit</h1>
+    <hr>
+
+    <table>
+        <tr>
+            <th>Judul Tayangan</th>
+            <th>Aksi</th>
+        </tr>
+    
+        {% for tayangan in tayangan_favorit %}
+        <tr>
+            <td>{{ tayangan.0 }}</td>
+            <td>
+                <form action="{% url 'favorite:delete_tayangan_favorit' tayangan.2 tayangan.1 %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Hapus</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+
+{% endblock content %}

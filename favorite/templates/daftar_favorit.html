@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+<body>
+    <h1>Daftar Favorit</h1>
+    <hr>
+
+    <table>
+        <tr>
+            <th>Judul</th>
+            <th>Waktu Ditambahkan</th>
+            <th>Aksi</th>
+        </tr>
+    
+        {% for daftar in daftar_favorit %}
+        <tr>
+            <td><a href="{% url 'favorite:show_tayangan_favorit' daftar.1 %}">{{ daftar.0 }}</td>
+            <td>{{ daftar.1 }}</td>
+            <td>
+                <form action="{% url 'favorite:delete_daftar_favorit' daftar.1 %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Hapus</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+
+{% endblock content %}
