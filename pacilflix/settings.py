@@ -92,11 +92,11 @@ WSGI_APPLICATION = 'pacilflix.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('POSTGRES_DB'),
-        'USER': env('POSTGRES_USER'),
-        'PASSWORD': env('POSTGRES_PASSWORD'),
-        'HOST': env('PGHOST'),
-        'PORT': env('PGPORT'),
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'WwIxFsrYlpHQEiCwqRxksehwARBkHClX',
+        'HOST': 'roundhouse.proxy.rlwy.net',
+        'PORT': '23570',
     }
 }
 
