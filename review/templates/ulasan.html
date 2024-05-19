@@ -2,39 +2,80 @@
 <html>
 <head>
     <title>Ulasan</title>
-
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        .review-form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .review-list {
+            margin-top: 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .review-list li {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .review-list li:last-child {
+            border-bottom: none;
+        }
+        .ulasan-header {
+            margin-bottom: 10px;
+        }
+        .username {
+            font-weight: bold;
+        }
+        .timestamp {
+            color: #6c757d;
+        }
+        .rating {
+            color: #ffc107;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
 {% block content %}
 <body>
     <div class="container">
         <center><h1>Ulasan {{ judul.1 }}</h1></center>
         <div class="review-form">
-
-      <div class="review-form">
             <h2>Beri ulasan</h2>
             <form id="reviewForm" method="post" action="{% url 'ulasan:submit_ulasan' judul.0 %}">
                 {% csrf_token %}
-                <div class="form-row">
+                <div class="form-group">
                     <label for="rating">Rating (1-5):</label>
-                    <input type="number" id="rating" name="rating" min="1" max="5" required>
+                    <input type="number" class="form-control" id="rating" name="rating" min="1" max="5" required>
                 </div>
-                <div class="form-row">
+                <div class="form-group">
                     <label for="deskripsi">Ulasan:</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="4" required></textarea>
+                    <textarea class="form-control" id="deskripsi" name="deskripsi" rows="4" required></textarea>
                 </div>
-                <input type="submit" value="Submit">
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         </div>
-
         <div class="review-list">
-            <h2>Ulasan</h2>
-            <ul id="reviews">
+            <h2>Daftar Ulasan</h2>
+            <ul id="reviews" class="list-unstyled">
                 {% for ulasan in ulasans %}
                 <li>
                     <div class="ulasan-header">
-                        <span class="username">{{ ulasan.1 }}</span>
-                        <span class="timestamp">{{ ulasan.2 }}</span>
+                        <span class="username">Username: {{ ulasan.1 }}.</span>
+                        <br>
+                        <span class="timestamp">Time: {{ ulasan.2 }}</span>
                     </div>
-                    <div class="rating">{{ ulasan.3 }}/5</div>
+                    <div class="rating">Rating: {{ ulasan.3 }}/5 ⭐</div>
                     <div class="description">"{{ ulasan.4 }}"</div>
                 </li>
                 {% endfor %}
@@ -42,4 +83,4 @@
         </div>
     </div>
 </body>
-{% endblock content %} 
+{% endblock content %}

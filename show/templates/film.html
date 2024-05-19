@@ -85,20 +85,50 @@
     <div class="container">
         <div class="film-details">
             <h1>{{ film_details.judul }}</h1>
-            <br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br>
             <input type="range" class="form-range" min="0" max="100" id="watchrange">
             <br><br><br>
-            <p>{{ film_details.sinopsis }}</p>
-            <br>
-            <p>Tanggal Rilis: {{ film_details.release_date_film }}</p>
+
+            <div class="film-buttons">
+                <button class="primary">Tonton</button>
+                <button type="button" class="primary" onclick="downloadTayangan('{{ film_details.id_tayangan }}')" data-bs-toggle="modal" data-bs-target="#downloadModal">
+                    Unduh
+                </button>
+            
+                <!-- Modal -->
+                <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="downloadModalLabel">Sukses Menambahkan Tayangan ke Daftar Unduhan</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body" id="modalBody">
+                                <!-- Text will be inserted here by JavaScript -->
+                            </div>
+                            <a type="button" class="btn btn-primary" href="{% url 'show:film' film_details.id_tayangan %}">Menuju Film</a>
+                        </div>
+                    </div>
+                </div>
+            
+                <button type="button" class="favorite" onclick="loadModalFavorit()">
+                    Favorit
+                </button>
+    
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+            </div> <br><br><br>
+
+            <p>Total views: </p>
+            <p>Rating rata-rata: 4.5/5</p>
+            <p>Sinopsis: {{ film_details.sinopsis }}</p>
+            <p>Durasi Film: {{ film_details.durasi_film }} mins</p>
+            <p>Tanggal Rilis Film: {{ film_details.release_date_film }}</p>
             <p>Genre: 
                 {% for genre in film_details.genres %}
                     {{ genre }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </p>
             <p>Asal Negara: {{ film_details.asal_negara }}</p>
-            <p>Durasi: {{ film_details.durasi_film }} mins</p>
-            <p>Rating: 4.5/5</p>
             <p>Pemain: 
                 {% for pemain in film_details.pemain %}
                     {{ pemain }}{% if not forloop.last %}, {% endif %}
@@ -110,37 +140,10 @@
                 {% endfor %}
             </p>
             <p>Sutradara: {{ film_details.sutradara }}</p>
+
+                <a class="btn btn-secondary" role="button" href="{% url 'ulasan:ulasan' film_details.id_tayangan %}">Ulasan</a>
+                
         </div>        
-        <div class="film-buttons">
-            <button class="primary">Tonton</button>
-            <button type="button" class="primary" onclick="downloadTayangan('{{ film_details.id_tayangan }}')" data-bs-toggle="modal" data-bs-target="#downloadModal">
-                Unduh
-            </button>
-        
-            <!-- Modal -->
-            <div class="modal fade" id="downloadModal" tabindex="-1" aria-labelledby="downloadModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="downloadModalLabel">Sukses Menambahkan Tayangan ke Daftar Unduhan</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body" id="modalBody">
-                            <!-- Text will be inserted here by JavaScript -->
-                        </div>
-                        <a type="button" class="btn btn-primary" href="{% url 'show:film' film_details.id_tayangan %}">Menuju Film</a>
-                    </div>
-                </div>
-            </div>
-        
-            <button type="button" class="favorite" onclick="loadModalFavorit()">
-                Favorit
-            </button>
-
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        </div>
-
-        {% include 'reviews.html' %}
     </div>
 </body>
 

@@ -27,8 +27,12 @@
   <h1 class="text-center mb-4">Tayangan</h1>
   <div class="text-center mb-3"><a class="btn btn-secondary" role="button" href="{% url 'show:search_tayangan' %}">Search films and series</a></div>
   
-  
-  <h2 class="mb-3">Top 10 Movies</h2>
+  <h2 class="mb-3">10 Tayangan Terbaik Minggu ini</h2>
+  <select>
+    <option value="global">Top 10 Global</option>
+    <option value="local">Top 10 Indonesia</option> <br>
+  </select>
+
   <table>
     <tr>
       <th>Peringkat</th>
@@ -37,7 +41,7 @@
       <th>URL Trailer</th>
       <th>Tanggal Rilis Trailer</th>
       <th>Total View 7 Hari Terakhir</th>
-      <th>Aksi</th>
+      <th>Tayangan</th>
     </tr>
     {% for item in tayangan_first_half %}
     <tr>
