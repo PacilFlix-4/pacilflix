@@ -32,27 +32,31 @@
             </tr>
         {% endfor %}
     </table>
+
+    {% if error_message %}
+    <div id="errorModal" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <h6>GAGAL MENGHAPUS TAYANGAN DARI DAFTAR UNDUHAN</h6>
+            <p>{{ error_message }}</p>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    {% endif %}
 </body>
 </html>
 {% endblock content %}
 
 {% block scripts %}
 <script>
-    function deleteModal(title) {
-        var modal = document.getElementById("favoriteModal");
-        judulTayangan.innerHTML = title;
-        modal.style.display = "flex";
+    function closeModal() {
+        var modal = document.getElementById("errorModal");
+        modal.style.display = "none";
     }
-
-    window.onclick = function(event) {
-        var favoriteModal = document.getElementById("favoriteModal");
-        
-        if (event.target == favoriteModal) {
-            favoriteModal.style.display = "none";
+    
+    window.onload = function() {
+        if (document.getElementById("errorModal")) {
+            document.getElementById("errorModal").style.display = "flex";
         }
-        if (event.target == downloadModal) {
-            downloadModal.style.display = "none";
-        }
-    }
-</script>
+    };
+    </script>
 {% endblock scripts %}

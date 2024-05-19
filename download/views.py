@@ -1,5 +1,6 @@
 import datetime
 from django.db import connection
+from django.db import IntegrityError
 from django.shortcuts import redirect, render
 from django.http import HttpResponseNotAllowed, JsonResponse
 from authentication.views import get_pengguna
@@ -61,23 +62,30 @@ def delete_unduhan(request, id_tayangan, timestamp):
     username = get_pengguna(request)
 
     if request.method == 'POST':
-        query_update = f"""
-            DELETE FROM TAYANGAN_TERUNDUH
-            WHERE id_tayangan = '{id_tayangan}' AND timestamp = '{timestamp}' AND username = '{username}';
-        """
+        try:
+            query_update = f"""
+                DELETE FROM TAYANGAN_TERUNDUH
+                WHERE id_tayangan = '{id_tayangan}' AND timestamp = '{timestamp}' AND username = '{username}';
+            """
 
-        cursor = connection.cursor()
-        cursor.execute(query_update)
-        row_deleted = cursor.rowcount
-        cursor.close()
+            cursor = connection.cursor()
+            cursor.execute(query_update)
+            row_deleted = cursor.rowcount
+            cursor.close()
 
-        if row_deleted > 0:
-            return redirect('download:show_download')
+            if row_deleted > 0:
+                return redirect('download:show_download')
+            else:
+                return redirect('download:show_download')
+
+        except IntegrityError as e:
+            error_message = "Tayangan minimal harus berada di daftar unduhan selama 1 hari agar bisa dihapus"
+
+        if error_message:
+            context = {'error_message': error_message}
+            return render(request, "download.html", context)
         else:
             return redirect('download:show_download')
-        
+
     else:
-        if request.method == 'GET':
-            return HttpResponseNotAllowed(['POST'], 'This action can only be performed with POST.')
-        else:
-            return HttpResponseNotAllowed(['POST'])
+        return HttpResponseNotAllowed(['POST'], 'This action can only be performed with POST.')
